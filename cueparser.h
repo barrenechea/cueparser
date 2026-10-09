@@ -99,6 +99,8 @@ void CueParser_construct(struct CueParser*, struct CueDisc*);
 void CueParser_close(struct CueParser*, struct CueScheduler*,
                      void (*)(struct CueParser*, struct CueScheduler*, const char* error));
 void CueParser_destroy(struct CueParser*);
+/* fileopen fills in the CueFile it's given and returns it, or returns NULL when the FILE can't be
+   opened. It sets destroy either way: the parser calls destroy on that CueFile before freeing it. */
 void CueParser_parse(struct CueParser* parser, struct CueFile* file, struct CueScheduler* scheduler,
                      struct CueFile* (*fileopen)(struct CueFile*, struct CueScheduler*, const char* filename),
                      void (*cb)(struct CueParser*, struct CueScheduler*, const char* error));
