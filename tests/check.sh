@@ -5,7 +5,7 @@
 
 dump=$1
 update=$2
-dir=$(dirname "$0")/corpus
+dir=$(dirname "$0")/${3:-corpus}
 failed=0
 
 run() {

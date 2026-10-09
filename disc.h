@@ -41,6 +41,9 @@ struct CueFile;
 #ifndef MAXINDEX
 #define MAXINDEX 100
 #endif
+#if MAXINDEX < 2
+#error "MAXINDEX must be at least 2"
+#endif
 
 enum CueTrackType { TRACK_TYPE_UNKNOWN, TRACK_TYPE_AUDIO, TRACK_TYPE_DATA };
 

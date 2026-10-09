@@ -11,7 +11,7 @@ FUZZ_CFLAGS ?= -O1 -g -fsanitize=fuzzer,address,undefined -fno-sanitize-recover=
 SRCS := $(ROOT)/cueparser.c $(ROOT)/fileabstract.c $(ROOT)/scheduler.c harness.c
 INCLUDE := $(BUILD)/include
 
-all: $(BUILD)/cuedump
+all: $(BUILD)/cuedump $(BUILD)/cuedump-maxindex2
 
 $(INCLUDE)/cueparser:
 	mkdir -p $(INCLUDE)
@@ -20,14 +20,19 @@ $(INCLUDE)/cueparser:
 $(BUILD)/cuedump: $(SRCS) cuedump.c harness.h | $(INCLUDE)/cueparser
 	$(CC) $(CFLAGS) -I$(INCLUDE) -I. -o $@ $(SRCS) cuedump.c
 
+$(BUILD)/cuedump-maxindex2: $(SRCS) cuedump.c harness.h | $(INCLUDE)/cueparser
+	$(CC) $(CFLAGS) -DMAXINDEX=2 -I$(INCLUDE) -I. -o $@ $(SRCS) cuedump.c
+
 $(BUILD)/fuzz: $(SRCS) fuzz.c harness.h | $(INCLUDE)/cueparser
 	$(FUZZ_CC) $(FUZZ_CFLAGS) -I$(INCLUDE) -I. -o $@ $(SRCS) fuzz.c
 
-check: $(BUILD)/cuedump
+check: $(BUILD)/cuedump $(BUILD)/cuedump-maxindex2
 	./check.sh $(BUILD)/cuedump
+	./check.sh $(BUILD)/cuedump-maxindex2 "" corpus-maxindex2
 
-gold: $(BUILD)/cuedump
+gold: $(BUILD)/cuedump $(BUILD)/cuedump-maxindex2
 	./check.sh $(BUILD)/cuedump --update
+	./check.sh $(BUILD)/cuedump-maxindex2 --update corpus-maxindex2
 
 fuzz: $(BUILD)/fuzz
 

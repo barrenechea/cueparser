@@ -478,7 +478,7 @@ static void parse(struct CueParser* parser, struct CueFile* file, struct CueSche
                 }
                 char* endptr;
                 int indexNum = strtol(parser->word, &endptr, 10);
-                if (*endptr || (indexNum < 0) || (indexNum >= MAXINDEX)) {
+                if (*endptr || (indexNum < 0) || (indexNum > 99)) {
                     end_parse(parser, scheduler, "cuesheet INDEX number invalid");
                     return;
                 }
@@ -513,6 +513,10 @@ static void parse(struct CueParser* parser, struct CueFile* file, struct CueSche
                     }
                     parser->cutting = sectorNumber;
                     parser->currentFileSize -= (uint64_t)sectorNumber * 2352;
+                }
+                if (track->indexCount >= MAXINDEX) {
+                    parser->state = CUE_PARSER_START;
+                    break;
                 }
                 track->indices[track->indexCount] = parser->currentSectorNumber + sectorNumber - parser->cutting;
                 if (parser->implicitIndex) {
